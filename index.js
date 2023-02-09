@@ -72,8 +72,9 @@ class Calculator {
   }
 
   _addOperation(operation) {
+    console.log(this.#currentOperand[1]);
     if (this.#currentOperand === "") return;
-    if (this.#currentOperand.split("").splice(-1).join("") === ".") return;
+    if (this.#currentOperand.split("").at(-1) === ".") return;
     if (this.#previousOperand !== "") this._checkOperation(this.#operation);
     this.#operation = operation;
     this.#previousOperand = this.#currentOperand;
