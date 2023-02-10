@@ -14,8 +14,9 @@ class Calculator {
   constructor(previousOperandSpot, currentOperandSpot) {
     this.previousOperandSpot = previousOperandSpot;
     this.currentOperandSpot = currentOperandSpot;
-    this._init();
-    document.addEventListener("keydown", this._handleKeyPress.bind(this));
+    document.addEventListener("keydown", (event) =>
+      this._handleKeyPress(event)
+    );
     allNumsBtns.forEach((btn) =>
       btn.addEventListener("click", () => this._appendNum(btn.dataset.num))
     );
@@ -28,12 +29,7 @@ class Calculator {
     deleteBtn.addEventListener("click", () =>
       this._delete(this.#currentOperand)
     );
-    clearAllBtn.addEventListener("click", this._clearAll.bind(this));
-  }
-
-  _init() {
-    this.#currentOperand = "0";
-    this.currentOperandSpot.textContent = this.#currentOperand;
+    clearAllBtn.addEventListener("click", (event) => this._clearAll(event));
   }
 
   _handleKeyPress(event) {
@@ -44,12 +40,12 @@ class Calculator {
     if (keyPressed === "=" || keyPressed === "Enter")
       this._checkOperation(this.#operation);
     if (keyPressed === "Backspace") this._delete(this.#currentOperand);
-    if (keyPressed === "Escape") this._clearAll();
+    if (keyPressed === "Escape") this._clearAll(keyPressed);
   }
 
   _appendNum(number) {
+    if (number === "." && this.#currentOperand === "") return;
     if (number === "." && this.#currentOperand.includes(number)) return;
-    if (number === "0" && this.#currentOperand[0] === "0") return;
     this.#currentOperand += number;
     this.currentOperandSpot.textContent = this._displayNumLocal(
       this.#currentOperand
@@ -72,7 +68,6 @@ class Calculator {
   }
 
   _addOperation(operation) {
-    console.log(this.#currentOperand[1]);
     if (this.#currentOperand === "") return;
     if (this.#currentOperand.split("").at(-1) === ".") return;
     if (this.#previousOperand !== "") this._checkOperation(this.#operation);
@@ -81,7 +76,8 @@ class Calculator {
     this.previousOperandSpot.textContent = `${this._displayNumLocal(
       this.#previousOperand
     )} ${this.#operation}`;
-    this._init();
+    this.#currentOperand = "";
+    this.currentOperandSpot.textContent = this.#currentOperand;
   }
 
   _checkOperation(operation) {
@@ -116,23 +112,26 @@ class Calculator {
     this.currentOperandSpot.textContent = this._displayNumLocal(answer);
     this.#currentOperand = answer.toString();
     this.#previousOperand = "";
-    this.#operation = undefined;
+    // this.#operation = undefined;
   }
 
   _delete(operand) {
-    if (operand === "" || operand === "0") return;
-    if (Math.sign(operand) === -1 && operand.length === 2) return this._init();
-    const newOperand = operand.substring(0, operand.length - 1);
+    let newOperand;
+    newOperand = operand.substring(0, operand.length - 1);
+    if (newOperand === "-") newOperand = "";
     this.#currentOperand = newOperand;
-    this.currentOperandSpot.textContent = this._displayNumLocal(newOperand);
+    this.currentOperandSpot.textContent = this._displayNumLocal(
+      this.#currentOperand
+    );
   }
 
-  _clearAll() {
-    if (this.#currentOperand === "0" && this.#previousOperand === "") return;
+  _clearAll(event) {
+    if (event !== "Escape" && event.target.dataset.clear === undefined) return;
     this.#previousOperand = "";
+    this.previousOperandSpot.textContent = this.#previousOperand;
+    this.#currentOperand = "";
+    this.currentOperandSpot.textContent = this.#currentOperand;
     this.#operation = undefined;
-    this._init();
-    this.previousOperandSpot.textContent = "";
   }
 }
 
