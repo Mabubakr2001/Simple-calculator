@@ -68,7 +68,7 @@ class Calculator {
   }
 
   _addOperation(operation) {
-    if (this.#currentOperand === "") return;
+    if (this.#currentOperand == "") return;
     if (this.#currentOperand.split("").at(-1) === ".") return;
     if (this.#previousOperand !== "") this._checkOperation(this.#operation);
     this.#operation = operation;
