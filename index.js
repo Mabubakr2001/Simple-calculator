@@ -112,7 +112,6 @@ class Calculator {
     this.currentOperandSpot.textContent = this._displayNumLocal(answer);
     this.#currentOperand = answer.toString();
     this.#previousOperand = "";
-    // this.#operation = undefined;
   }
 
   _delete(operand) {
